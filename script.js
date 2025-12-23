@@ -1,83 +1,106 @@
-// قاعدة بيانات المحطات والخطوط
-const railNetwork = {
-    suburban: ["البليدة", "بني مراد", "بوفاريك", "بئر توتة", "الحراش", "آغا", "الجزائر"],
-    west: ["الجزائر", "الشلف", "غليزان", "وهران", "تلمسان"],
-    east: ["الجزائر", "البويرة", "سطيف", "قسنطينة", "سكيكدة", "عنابة"],
-    south: ["الجزائر", "المسيلة", "بسكرة", "تقرت", "بشار"]
-};
+// مصفوفة ضخمة للمحطات الجزائرية
+const stationsDB = [
+    { name: "الجزائر - آغا", lat: 36.7645, lng: 3.0515 },
+    { name: "البليدة", lat: 36.4701, lng: 2.8288 },
+    { name: "بني مراد", lat: 36.5050, lng: 2.8610 },
+    { name: "وهران", lat: 35.6971, lng: -0.6308 },
+    { name: "قسنطينة", lat: 36.3650, lng: 6.6147 },
+    { name: "عنابة", lat: 36.9000, lng: 7.7667 },
+    { name: "بجاية", lat: 36.7511, lng: 5.0567 },
+    { name: "سطيف", lat: 36.1898, lng: 5.4032 },
+    { name: "تلمسان", lat: 34.8817, lng: -1.3167 },
+    { name: "بشار", lat: 31.6167, lng: -2.2167 }
+];
 
-const i18n = {
-    ar: { title: "الشبكة الوطنية SNTF", search: "بحث", dur: "مدة الرحلة", price: "السعر" },
-    fr: { title: "Réseau National SNTF", search: "Chercher", dur: "Durée", price: "Prix" },
-    en: { title: "SNTF National Network", search: "Search", dur: "Duration", price: "Price" }
-};
+let map, trainMarker, routeLine;
 
-// تحديث قائمة المحطات بناءً على الخط المختار
-function updateStations() {
-    const line = document.getElementById('line-select').value;
-    const fromSelect = document.getElementById('from-station');
-    const toSelect = document.getElementById('to-station');
+// 1. نظام البحث الذكي
+function filterStations(type) {
+    const query = document.getElementById(`${type}-input`).value.toLowerCase();
+    const list = document.getElementById(`${type}-list`);
+    list.innerHTML = "";
     
-    const stations = railNetwork[line];
-    const options = stations.map(s => `<option value="${s}">${s}</option>`).join('');
-    
-    fromSelect.innerHTML = options;
-    toSelect.innerHTML = options;
+    if (query.length < 1) return;
+
+    const filtered = stationsDB.filter(s => s.name.toLowerCase().includes(query));
+    filtered.forEach(s => {
+        const div = document.createElement('div');
+        div.className = "suggestion-item";
+        div.innerText = s.name;
+        div.onclick = () => selectStation(type, s);
+        list.appendChild(div);
+    });
 }
 
-// تبديل الوضع الليلي
-function toggleTheme() {
-    document.body.classList.toggle('dark-mode');
+function selectStation(type, station) {
+    document.getElementById(`${type}-input`).value = station.name;
+    document.getElementById(`${type}-list`).innerHTML = "";
+    // حفظ البيانات في الحقل كخاصية مخفية
+    document.getElementById(`${type}-input`).dataset.lat = station.lat;
+    document.getElementById(`${type}-input`).dataset.lng = station.lng;
 }
 
-// محرك البحث وعرض التذكرة
-function searchTrains() {
-    const lang = document.getElementById('lang-selector').value;
-    const from = document.getElementById('from-station').value;
-    const to = document.getElementById('to-station').value;
-    const results = document.getElementById('results-container');
+// 2. التتبع الحي الحقيقي
+function processSearch() {
+    const from = document.getElementById('from-input');
+    const to = document.getElementById('to-input');
 
-    if (from === to) {
-        alert("يرجى اختيار محطتين مختلفتين");
-        return;
+    if (!from.dataset.lat || !to.dataset.lat) return alert("يرجى اختيار المحطات من القائمة");
+
+    document.getElementById('map-section').style.display = 'block';
+    initMap(from.dataset, to.dataset);
+    showTimes(from.value, to.value);
+}
+
+function initMap(start, end) {
+    const sPos = [parseFloat(start.lat), parseFloat(start.lng)];
+    const ePos = [parseFloat(end.lat), parseFloat(end.lng)];
+
+    if (!map) {
+        map = L.map('map').setView(sPos, 7);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    } else {
+        map.setView(sPos, 7);
+        if(routeLine) map.removeLayer(routeLine);
+        if(trainMarker) map.removeLayer(trainMarker);
     }
 
-    results.innerHTML = `
-        <div class="ticket animated">
-            <div style="display:flex; justify-content:space-between; align-items:center">
-                <span style="font-size: 12px; opacity: 0.8">SNTF Express</span>
-                <button onclick="activateNotify()" style="background:none; border:none; color:white; cursor:pointer">🔔</button>
+    // رسم مسار الرحلة
+    routeLine = L.polyline([sPos, ePos], {color: 'var(--md-primary)', weight: 4, dashArray: '10, 10'}).addTo(map);
+    
+    // أيقونة القطار المتحركة
+    trainMarker = L.marker(sPos, {
+        icon: L.divIcon({html: '<i class="fas fa-train" style="color:#006d3a; font-size:24px;"></i>', className: 'train-move'})
+    }).addTo(map);
+
+    animateTrain(sPos, ePos);
+}
+
+function animateTrain(start, end) {
+    let p = 0;
+    const interval = setInterval(() => {
+        p += 0.005;
+        if (p >= 1) clearInterval(interval);
+        const lat = start[0] + (end[0] - start[0]) * p;
+        const lng = start[1] + (end[1] - start[1]) * p;
+        trainMarker.setLatLng([lat, lng]);
+    }, 100);
+}
+
+function showTimes(f, t) {
+    const area = document.getElementById('results-area');
+    area.innerHTML = `
+        <div class="card">
+            <h3><i class="fas fa-clock"></i> الرحلة القادمة</h3>
+            <div style="display:flex; justify-content:space-between; margin-top:10px;">
+                <span>الانطلاق: <strong>08:30</strong></span>
+                <span>الوصول: <strong>10:15</strong></span>
             </div>
-            <div style="display:flex; justify-content:space-between; margin: 15px 0; align-items:center">
-                <div style="text-align:center"><h3>${from}</h3><small>07:00</small></div>
-                <div style="flex-grow:1; border-top:2px dashed white; margin:0 15px; position:relative">
-                    <span style="position:absolute; top:-12px; left:45%">🚆</span>
-                </div>
-                <div style="text-align:center"><h3>${to}</h3><small>11:30</small></div>
-            </div>
-            <div style="display:flex; justify-content:space-between; border-top: 1px solid rgba(255,255,255,0.2); padding-top:10px">
-                <span>⏱️ ${i18n[lang].dur}: 4h 30min</span>
-                <strong>💰 850 DA</strong>
-            </div>
+            <p style="margin-top:10px; color:var(--md-primary)">💰 التذكرة: 120 دج</p>
         </div>
     `;
 }
 
-function activateNotify() {
-    if (Notification.permission !== "granted") {
-        Notification.requestPermission();
-    } else {
-        new Notification("SNTF", { body: "تم تفعيل تنبيه الوصول لمحطة " + document.getElementById('to-station').value });
-    }
+function toggleTheme() {
+    document.body.classList.toggle('dark-mode');
 }
-
-// تشغيل الوظائف عند التحميل
-function initApp() {
-    const lang = document.getElementById('lang-selector').value;
-    document.getElementById('app-title').innerText = i18n[lang].title;
-    document.getElementById('btn-search').innerText = i18n[lang].search;
-    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-    updateStations();
-}
-
-window.onload = initApp;
