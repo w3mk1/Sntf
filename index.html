@@ -3,53 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SNTF Global - Algeria</title>
+    <title>SNTF Super App</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="light-mode">
     <div class="app-container">
-        <header>
-            <h1 id="app-title">الشبكة الوطنية SNTF</h1>
-            <div class="header-actions">
-                <button id="voice-search" onclick="startVoiceSearch()">🎤</button>
+        <header class="m3-header">
+            <div class="brand">
+                <i class="fas fa-train-subway"></i>
+                <span>SNTF Go</span>
+            </div>
+            <div class="actions">
+                <button onclick="toggleTheme()" class="icon-btn"><i class="fas fa-moon"></i></button>
                 <select id="lang-selector" onchange="initApp()">
                     <option value="ar">العربية</option>
                     <option value="fr">Français</option>
                     <option value="en">English</option>
                 </select>
-                <button id="theme-toggle" onclick="toggleTheme()">🌙</button>
             </div>
         </header>
 
-        <main>
-            <div class="card search-section">
-                <div class="input-group">
-                    <label id="lbl-line">الخط:</label>
-                    <select id="line-select" onchange="updateStations()">
-                        <option value="suburban">ضواحي الجزائر (البليدة/العفرون)</option>
-                        <option value="west">خط الغرب (وهران/تلمسان)</option>
-                        <option value="east">خط الشرق (قسنطينة/عنابة)</option>
-                        <option value="south">خط الجنوب (بشار/تقرت)</option>
-                    </select>
+        <section class="search-box card">
+            <div class="search-row">
+                <div class="input-field">
+                    <i class="fas fa-location-dot"></i>
+                    <input type="text" id="from-input" placeholder="محطة الانطلاق..." onkeyup="filterStations('from')">
+                    <div id="from-list" class="suggestion-box"></div>
                 </div>
-
-                <div class="route-selectors">
-                    <div class="input-group">
-                        <label id="lbl-from">من:</label>
-                        <select id="from-station"></select>
-                    </div>
-                    <div class="input-group">
-                        <label id="lbl-to">إلى:</label>
-                        <select id="to-station"></select>
-                    </div>
+                <button class="swap-btn" onclick="swapStations()"><i class="fas fa-retweet"></i></button>
+                <div class="input-field">
+                    <i class="fas fa-map-pin"></i>
+                    <input type="text" id="to-input" placeholder="محطة الوصول..." onkeyup="filterStations('to')">
+                    <div id="to-list" class="suggestion-box"></div>
                 </div>
-
-                <button class="btn-main" onclick="searchTrains()" id="btn-search">بحث عن الرحلات</button>
             </div>
+            <button class="btn-primary-m3" onclick="processSearch()">
+                <i class="fas fa-search"></i> بحث عن المواعيد والتتبع
+            </button>
+        </section>
 
-            <div id="results-container"></div>
-        </main>
+        <div id="map-section" class="card" style="display:none;">
+            <div class="map-header">
+                <span class="live-badge">● مباشر</span>
+                <span id="dist-info">المسافة: -- كلم</span>
+            </div>
+            <div id="map"></div>
+        </div>
+
+        <div id="results-area"></div>
     </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
