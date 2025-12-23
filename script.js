@@ -1,73 +1,83 @@
-const stations = ["Beni Mourad", "Boufarik", "Chebli", "Baba Ali", "Birtouta", "El Harrach", "Agha"];
-
-const content = {
-    ar: { title: "مواقيت SNTF", from: "من:", to: "إلى:", search: "بحث", price: "السعر:", dur: "50 دقيقة" },
-    fr: { title: "SNTF Horaires", from: "De:", to: "À:", search: "Chercher", price: "Prix:", dur: "50 min" },
-    en: { title: "SNTF Schedule", from: "From:", to: "To:", search: "Search", price: "Price:", dur: "50 min" }
+// قاعدة بيانات المحطات والخطوط
+const railNetwork = {
+    suburban: ["البليدة", "بني مراد", "بوفاريك", "بئر توتة", "الحراش", "آغا", "الجزائر"],
+    west: ["الجزائر", "الشلف", "غليزان", "وهران", "تلمسان"],
+    east: ["الجزائر", "البويرة", "سطيف", "قسنطينة", "سكيكدة", "عنابة"],
+    south: ["الجزائر", "المسيلة", "بسكرة", "تقرت", "بشار"]
 };
 
-// 1. تبديل اللغات
-function changeLanguage() {
-    const lang = document.getElementById('lang-selector').value;
-    const t = content[lang];
-    document.getElementById('app-title').innerText = t.title;
-    document.getElementById('lbl-from').innerText = t.from;
-    document.getElementById('lbl-to').innerText = t.to;
-    document.getElementById('btn-search').innerText = t.search;
-    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-}
+const i18n = {
+    ar: { title: "الشبكة الوطنية SNTF", search: "بحث", dur: "مدة الرحلة", price: "السعر" },
+    fr: { title: "Réseau National SNTF", search: "Chercher", dur: "Durée", price: "Prix" },
+    en: { title: "SNTF National Network", search: "Search", dur: "Duration", price: "Price" }
+};
 
-// 2. البحث الصوتي
-function startVoiceSearch() {
-    const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!Recognition) return alert("متصفحك لا يدعم البحث الصوتي");
+// تحديث قائمة المحطات بناءً على الخط المختار
+function updateStations() {
+    const line = document.getElementById('line-select').value;
+    const fromSelect = document.getElementById('from-station');
+    const toSelect = document.getElementById('to-station');
     
-    const rec = new Recognition();
-    rec.lang = document.getElementById('lang-selector').value === 'ar' ? 'ar-DZ' : 'fr-FR';
-    rec.start();
-    rec.onresult = (e) => {
-        const text = e.results[0][0].transcript;
-        alert("بحثت عن: " + text);
-    };
+    const stations = railNetwork[line];
+    const options = stations.map(s => `<option value="${s}">${s}</option>`).join('');
+    
+    fromSelect.innerHTML = options;
+    toSelect.innerHTML = options;
 }
 
-// 3. الإشعارات والتنبيه
-function requestNotify() {
-    Notification.requestPermission().then(p => {
-        if (p === 'granted') {
-            new Notification("SNTF", { body: "تم تفعيل تنبيه رحلة بني مراد!" });
-        }
-    });
+// تبديل الوضع الليلي
+function toggleTheme() {
+    document.body.classList.toggle('dark-mode');
 }
 
-// 4. عرض النتائج والتذكرة
+// محرك البحث وعرض التذكرة
 function searchTrains() {
     const lang = document.getElementById('lang-selector').value;
-    const container = document.getElementById('results-container');
-    
-    container.innerHTML = `
-        <div class="ticket">
-            <div style="display:flex; justify-content:space-between">
-                <span class="badge">الضواحي #102</span>
-                <span onclick="requestNotify()" style="cursor:pointer">🔔</span>
+    const from = document.getElementById('from-station').value;
+    const to = document.getElementById('to-station').value;
+    const results = document.getElementById('results-container');
+
+    if (from === to) {
+        alert("يرجى اختيار محطتين مختلفتين");
+        return;
+    }
+
+    results.innerHTML = `
+        <div class="ticket animated">
+            <div style="display:flex; justify-content:space-between; align-items:center">
+                <span style="font-size: 12px; opacity: 0.8">SNTF Express</span>
+                <button onclick="activateNotify()" style="background:none; border:none; color:white; cursor:pointer">🔔</button>
             </div>
-            <div class="ticket-path">
-                <div><strong>بني مراد</strong><br><small>08:00</small></div>
-                <div class="dashed-line"></div>
-                <div><strong>آغا</strong><br><small>08:50</small></div>
+            <div style="display:flex; justify-content:space-between; margin: 15px 0; align-items:center">
+                <div style="text-align:center"><h3>${from}</h3><small>07:00</small></div>
+                <div style="flex-grow:1; border-top:2px dashed white; margin:0 15px; position:relative">
+                    <span style="position:absolute; top:-12px; left:45%">🚆</span>
+                </div>
+                <div style="text-align:center"><h3>${to}</h3><small>11:30</small></div>
             </div>
-            <div style="border-top:1px solid rgba(255,255,255,0.2); padding-top:10px; display:flex; justify-content:space-between">
-                <span>${content[lang].dur}</span>
-                <strong>80 دج</strong>
+            <div style="display:flex; justify-content:space-between; border-top: 1px solid rgba(255,255,255,0.2); padding-top:10px">
+                <span>⏱️ ${i18n[lang].dur}: 4h 30min</span>
+                <strong>💰 850 DA</strong>
             </div>
-        </div>
-        <div class="card" style="margin-top:10px">
-            <small>المحطات: بوفاريك، بئر توتة، الحراش</small>
         </div>
     `;
 }
 
-// 5. الوضع الليلي
-function toggleTheme() {
-    document.body.classList.toggle('dark-mode');
+function activateNotify() {
+    if (Notification.permission !== "granted") {
+        Notification.requestPermission();
+    } else {
+        new Notification("SNTF", { body: "تم تفعيل تنبيه الوصول لمحطة " + document.getElementById('to-station').value });
+    }
 }
+
+// تشغيل الوظائف عند التحميل
+function initApp() {
+    const lang = document.getElementById('lang-selector').value;
+    document.getElementById('app-title').innerText = i18n[lang].title;
+    document.getElementById('btn-search').innerText = i18n[lang].search;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    updateStations();
+}
+
+window.onload = initApp;
