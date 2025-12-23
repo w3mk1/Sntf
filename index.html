@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SNTF - Bani Mourad to Agha</title>
+    <title>SNTF Global - Algeria</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="light-mode">
     <div class="app-container">
         <header>
-            <h1 id="app-title">مواقيت SNTF</h1>
+            <h1 id="app-title">الشبكة الوطنية SNTF</h1>
             <div class="header-actions">
                 <button id="voice-search" onclick="startVoiceSearch()">🎤</button>
-                <select id="lang-selector" onchange="changeLanguage()">
+                <select id="lang-selector" onchange="initApp()">
                     <option value="ar">العربية</option>
                     <option value="fr">Français</option>
                     <option value="en">English</option>
@@ -24,17 +24,26 @@
         <main>
             <div class="card search-section">
                 <div class="input-group">
-                    <label id="lbl-from">من:</label>
-                    <select id="from-station">
-                        <option value="Beni Mourad">بني مراد (Beni Mourad)</option>
+                    <label id="lbl-line">الخط:</label>
+                    <select id="line-select" onchange="updateStations()">
+                        <option value="suburban">ضواحي الجزائر (البليدة/العفرون)</option>
+                        <option value="west">خط الغرب (وهران/تلمسان)</option>
+                        <option value="east">خط الشرق (قسنطينة/عنابة)</option>
+                        <option value="south">خط الجنوب (بشار/تقرت)</option>
                     </select>
                 </div>
-                <div class="input-group">
-                    <label id="lbl-to">إلى:</label>
-                    <select id="to-station">
-                        <option value="Agha">آغا (Agha)</option>
-                    </select>
+
+                <div class="route-selectors">
+                    <div class="input-group">
+                        <label id="lbl-from">من:</label>
+                        <select id="from-station"></select>
+                    </div>
+                    <div class="input-group">
+                        <label id="lbl-to">إلى:</label>
+                        <select id="to-station"></select>
+                    </div>
                 </div>
+
                 <button class="btn-main" onclick="searchTrains()" id="btn-search">بحث عن الرحلات</button>
             </div>
 
