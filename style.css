@@ -1,117 +1,67 @@
 :root {
-    /* ألوان Material 3 */
-    --m3-primary: #0061a4;
-    --m3-on-primary: #ffffff;
-    --m3-primary-container: #d1e4ff;
-    --m3-on-primary-container: #001d36;
-    --m3-surface: #fdfcff;
-    --m3-surface-variant: #dfe2eb;
-    --m3-outline: #73777f;
+    --primary: #006d3a;
+    --on-primary: #ffffff;
+    --surface: #f6faef;
+    --text: #1a1c19;
+    --outline: #72796f;
+    --card-bg: #ffffff;
+}
+
+.dark-mode {
+    --primary: #76db92;
+    --on-primary: #00391b;
+    --surface: #1a1c19;
+    --text: #e2e3dd;
+    --card-bg: #2e312c;
 }
 
 body {
+    background-color: var(--surface);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui;
     margin: 0;
-    padding: 0;
-    font-family: 'Cairo', sans-serif;
-    background-color: var(--m3-surface);
-    overflow: hidden;
+    transition: 0.3s;
 }
 
-#map {
-    height: 100vh;
-    width: 100%;
-    z-index: 1;
+.app-container { padding: 16px; max-width: 500px; margin: auto; }
+
+header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
 }
 
-/* ستايل شريط البحث العلوي */
-.m3-search-bar {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    max-width: 450px;
-    height: 56px;
-    background: var(--m3-surface-variant);
+.card {
+    background: var(--card-bg);
     border-radius: 28px;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    padding: 0 16px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.m3-search-bar .title {
-    margin-right: 12px;
-    font-weight: 500;
-    color: var(--m3-on-primary-container);
-}
-
-/* تصميم البطاقة السفلية المنزلقة */
-.m3-bottom-sheet {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: var(--m3-surface);
-    border-radius: 28px 28px 0 0;
-    z-index: 1000;
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
-    transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
-}
-
-.m3-handle {
-    width: 32px;
-    height: 4px;
-    background: var(--m3-outline);
-    border-radius: 2px;
-    margin: 12px auto;
-    cursor: pointer;
-}
-
-.content-area {
-    padding: 0 24px 24px;
-}
-
-.m3-card {
-    background: var(--m3-primary-container);
-    color: var(--m3-on-primary-container);
     padding: 20px;
-    border-radius: 20px;
-    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    margin-bottom: 16px;
+    border: 1px solid var(--outline);
 }
 
-.status-chip {
-    display: inline-block;
-    padding: 6px 16px;
-    background: #e8def8;
-    border-radius: 10px;
-    font-size: 13px;
-    margin-bottom: 15px;
-}
-
-/* الأزرار الكبيرة المستديرة */
-.m3-btn-filled {
-    background: var(--m3-primary);
-    color: var(--m3-on-primary);
+.btn-main {
+    background: var(--primary);
+    color: var(--on-primary);
     border: none;
-    width: 100%;
-    padding: 16px;
+    padding: 14px;
     border-radius: 100px;
-    font-weight: 700;
-    font-size: 16px;
+    width: 100%;
+    font-weight: bold;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
 }
 
-select {
-    width: 100%;
-    padding: 12px;
-    border-radius: 12px;
-    border: 1px solid var(--m3-outline);
-    margin-top: 5px;
-    font-family: 'Cairo';
+/* تذكرة الرحلة الرقمية */
+.ticket {
+    background: var(--primary);
+    color: var(--on-primary);
+    padding: 20px;
+    border-radius: 24px;
+    position: relative;
 }
+
+.ticket-path {
+    display: flex; justify-content: space-between; align-items: center; margin: 15px 0;
+}
+
+.dashed-line { flex-grow: 1; border-top: 2px dashed rgba(255,255,255,0.4); margin: 0 10px; }
+
+.badge { background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 8px; font-size: 12px; }
