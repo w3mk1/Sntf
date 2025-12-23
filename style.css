@@ -1,63 +1,61 @@
 :root {
-    --primary: #006d3a;
-    --surface: #f6faef;
-    --text: #1a1c19;
-    --card-bg: #ffffff;
-    --accent: #ffb400;
+    --md-primary: #006d3a;
+    --md-surface: #f3f4f1;
+    --md-card: #ffffff;
+    --md-text: #1a1c19;
+    --md-outline: #72796f;
 }
 
 .dark-mode {
-    --primary: #76db92;
-    --surface: #1a1c19;
-    --text: #e2e3dd;
-    --card-bg: #2e312c;
+    --md-surface: #111411;
+    --md-card: #1c1f1c;
+    --md-text: #e2e3dd;
 }
 
 body {
-    background-color: var(--surface);
-    color: var(--text);
-    font-family: 'Cairo', sans-serif;
-    margin: 0;
-    transition: 0.3s;
+    background: var(--md-surface);
+    color: var(--md-text);
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0; padding: 10px;
 }
 
-.app-container { padding: 15px; max-width: 600px; margin: auto; }
-
 .card {
-    background: var(--card-bg);
+    background: var(--md-card);
     border-radius: 24px;
     padding: 20px;
     margin-bottom: 15px;
-    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
 }
 
-.input-group { margin-bottom: 12px; }
-
-select {
-    width: 100%;
-    padding: 12px;
+.input-field {
+    position: relative;
+    background: var(--md-surface);
+    padding: 10px;
     border-radius: 12px;
-    border: 1px solid #ccc;
-    background: var(--card-bg);
-    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
 }
 
-.ticket {
-    background: linear-gradient(135deg, var(--primary), #004d29);
-    color: white;
-    padding: 20px;
-    border-radius: 20px;
-    box-shadow: 0 10px 20px rgba(0,109,58,0.2);
+.input-field input {
+    background: none; border: none; outline: none; color: inherit; width: 100%;
 }
 
-.btn-main {
-    background: var(--primary);
-    color: white;
-    border: none;
-    padding: 15px;
-    border-radius: 50px;
-    width: 100%;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
+.suggestion-box {
+    position: absolute; top: 100%; left: 0; right: 0;
+    background: var(--md-card); z-index: 100;
+    max-height: 200px; overflow-y: auto;
+    border-radius: 0 0 12px 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
+
+.suggestion-item { padding: 10px; cursor: pointer; border-bottom: 1px solid rgba(0,0,0,0.05); }
+.suggestion-item:hover { background: var(--md-primary); color: white; }
+
+.btn-primary-m3 {
+    background: var(--md-primary); color: white; border: none;
+    width: 100%; padding: 15px; border-radius: 100px;
+    margin-top: 15px; font-weight: bold; cursor: pointer;
+}
+
+#map { height: 300px; border-radius: 16px; margin-top: 10px; }
