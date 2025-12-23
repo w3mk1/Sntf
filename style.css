@@ -1,15 +1,13 @@
 :root {
     --primary: #006d3a;
-    --on-primary: #ffffff;
     --surface: #f6faef;
     --text: #1a1c19;
-    --outline: #72796f;
     --card-bg: #ffffff;
+    --accent: #ffb400;
 }
 
 .dark-mode {
     --primary: #76db92;
-    --on-primary: #00391b;
     --surface: #1a1c19;
     --text: #e2e3dd;
     --card-bg: #2e312c;
@@ -18,50 +16,48 @@
 body {
     background-color: var(--surface);
     color: var(--text);
-    font-family: 'Segoe UI', system-ui;
+    font-family: 'Cairo', sans-serif;
     margin: 0;
     transition: 0.3s;
 }
 
-.app-container { padding: 16px; max-width: 500px; margin: auto; }
-
-header {
-    display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
-}
+.app-container { padding: 15px; max-width: 600px; margin: auto; }
 
 .card {
     background: var(--card-bg);
-    border-radius: 28px;
+    border-radius: 24px;
     padding: 20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    margin-bottom: 16px;
-    border: 1px solid var(--outline);
+    margin-bottom: 15px;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+.input-group { margin-bottom: 12px; }
+
+select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    background: var(--card-bg);
+    color: var(--text);
+}
+
+.ticket {
+    background: linear-gradient(135deg, var(--primary), #004d29);
+    color: white;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 10px 20px rgba(0,109,58,0.2);
 }
 
 .btn-main {
     background: var(--primary);
-    color: var(--on-primary);
+    color: white;
     border: none;
-    padding: 14px;
-    border-radius: 100px;
+    padding: 15px;
+    border-radius: 50px;
     width: 100%;
+    font-size: 16px;
     font-weight: bold;
     cursor: pointer;
 }
-
-/* تذكرة الرحلة الرقمية */
-.ticket {
-    background: var(--primary);
-    color: var(--on-primary);
-    padding: 20px;
-    border-radius: 24px;
-    position: relative;
-}
-
-.ticket-path {
-    display: flex; justify-content: space-between; align-items: center; margin: 15px 0;
-}
-
-.dashed-line { flex-grow: 1; border-top: 2px dashed rgba(255,255,255,0.4); margin: 0 10px; }
-
-.badge { background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 8px; font-size: 12px; }
