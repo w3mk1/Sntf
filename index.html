@@ -2,49 +2,45 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SNTF Live - Material 3</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNTF - Bani Mourad to Agha</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="light-mode">
+    <div class="app-container">
+        <header>
+            <h1 id="app-title">مواقيت SNTF</h1>
+            <div class="header-actions">
+                <button id="voice-search" onclick="startVoiceSearch()">🎤</button>
+                <select id="lang-selector" onchange="changeLanguage()">
+                    <option value="ar">العربية</option>
+                    <option value="fr">Français</option>
+                    <option value="en">English</option>
+                </select>
+                <button id="theme-toggle" onclick="toggleTheme()">🌙</button>
+            </div>
+        </header>
 
-    <div class="m3-search-bar">
-        <span class="icon">🚉</span>
-        <span class="title">SNTF Smart Tracker</span>
-    </div>
-
-    <div id="map"></div>
-
-    <div class="m3-bottom-sheet" id="sheet">
-        <div class="m3-handle" onclick="toggleSheet()"></div>
-        
-        <div class="content-area">
-            <div class="status-chip">🛰️ نظام التتبع المباشر نشط</div>
-
-            <div class="m3-card">
-                <h3>تخطيط الرحلة</h3>
+        <main>
+            <div class="card search-section">
                 <div class="input-group">
-                    <label>من المحطة:</label>
-                    <select id="start-station"></select>
+                    <label id="lbl-from">من:</label>
+                    <select id="from-station">
+                        <option value="Beni Mourad">بني مراد (Beni Mourad)</option>
+                    </select>
                 </div>
                 <div class="input-group">
-                    <label>إلى الوجهة:</label>
-                    <select id="end-station"></select>
+                    <label id="lbl-to">إلى:</label>
+                    <select id="to-station">
+                        <option value="Agha">آغا (Agha)</option>
+                    </select>
                 </div>
+                <button class="btn-main" onclick="searchTrains()" id="btn-search">بحث عن الرحلات</button>
             </div>
 
-            <button class="m3-btn-filled" onclick="startTracking()">
-                <span>🚀</span>
-                ابدأ التتبع الآن
-            </button>
-        </div>
+            <div id="results-container"></div>
+        </main>
     </div>
-
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
